@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/chrome": "^0.0.159",
     "@types/node": "^16.10.3",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^9.0.1",
