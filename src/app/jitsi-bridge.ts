@@ -5,10 +5,19 @@ declare namespace window {
   const JitsiMeetJS: any;
 }
 
-enum COMMAND {
+enum COMMANDS {
   GET_SCENES = "!scenes",
   CHANGE_SCENE = "!scene",
+  HELP = '!commands',
 }
+
+const help = [{
+  cmd: COMMANDS.GET_SCENES,
+  text: 'List all scenes',
+}, {
+  cmd: COMMANDS.CHANGE_SCENE + ' <scene name>',
+  text: 'Change scene to scene name',
+}]
 
 export class JitsiBridge {
   constructor(private obs: ObsBridge) {}
@@ -25,11 +34,17 @@ export class JitsiBridge {
   async handleIncomingMessage(msg: string) {
     const msgParts = msg.split(" ");
     switch (msgParts[0]) {
-      case COMMAND.GET_SCENES:
+      case COMMANDS.HELP:
+        const helpText = help.reduce((prev, current) => {
+          return `${prev}\n${current.cmd}: ${current.text}`
+        }, '')
+        window.APP.conference._room.sendMessage(helpText);
+        break;
+      case COMMANDS.GET_SCENES:
         const scenes = await this.obs.getScenes();
         window.APP.conference._room.sendMessage(scenes.join("\n"));
         break;
-      case COMMAND.CHANGE_SCENE:
+      case COMMANDS.CHANGE_SCENE:
         msgParts.shift();
         this.obs.changeScene(msgParts.join(" "));
         break;
